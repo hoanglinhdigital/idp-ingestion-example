@@ -50,6 +50,19 @@ metadata:
     - microservice
     - rest-api
     - authentication
+  links:
+    - url: https://user-service.company.com/docs
+      title: API Documentation
+      icon: docs
+    - url: https://gitlab.com/company/user-service
+      title: Source Code
+      icon: gitlab
+    - url: https://grafana.company.com/d/user-service
+      title: Grafana Dashboard
+      icon: dashboard
+    - url: https://jenkins.company.com/job/user-service
+      title: CI/CD Pipeline
+      icon: build
 spec:
   type: service
   lifecycle: production
