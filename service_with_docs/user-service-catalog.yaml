@@ -1,0 +1,115 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: user-service
+  title: User Management Service
+  description: Microservice handling user authentication, authorization, and profile management
+  annotations:
+    # Version information
+    backstage.io/service-version: "2.3.1"
+    backstage.io/managed-by-location: "url:https://github.com/company/user-service/blob/main/catalog-info.yaml"
+    
+    # GitHub integration
+    github.com/project-slug: company/user-service
+    github.com/team-slug: company/platform-team
+    
+    # CI/CD integration
+    jenkins.io/job-full-name: platform/user-service
+    circleci.com/project-slug: github/company/user-service
+    
+    # Monitoring & Observability
+    datadoghq.com/service-name: user-service
+    grafana/dashboard-url: https://grafana.company.com/d/user-service
+    pagerduty.com/service-id: PAGERDUTY_SERVICE_ID
+    
+    # Documentation
+    backstage.io/techdocs-ref: dir:.
+    confluence.com/space-key: USERSERV
+    
+    # Container/Deployment info
+    backstage.io/kubernetes-id: user-service
+    backstage.io/kubernetes-namespace: production
+    docker.com/image-name: company/user-service
+    
+    # Custom annotations for dependencies
+    dependencies/packages: |
+      - express@4.18.2
+      - jsonwebtoken@9.0.0
+      - bcryptjs@2.4.3
+      - mongoose@7.0.3
+      - redis@4.6.5
+      - @aws-sdk/client-s3@3.450.0
+      - winston@3.11.0
+      - joi@17.11.0
+    
+    # Environment-specific configuration
+    environment/type: production
+    environment/region: us-east-1
+    environment/cluster: prod-cluster-01
+    
+  labels:
+    # Environment labels
+    environment: production
+    tier: backend
+    
+    # Technical labels
+    language: nodejs
+    framework: express
+    database: mongodb
+    cache: redis
+    
+    # Business labels
+    team: platform
+    cost-center: engineering
+    data-classification: pii
+    compliance: gdpr-required
+    
+  tags:
+    - nodejs
+    - microservice
+    - rest-api
+    - authentication
+    - docker
+    - kubernetes
+    - critical-service
+    
+  links:
+    - url: https://user-service.company.com/docs
+      title: API Documentation
+      icon: docs
+    - url: https://github.com/company/user-service
+      title: Source Code
+      icon: github
+    - url: https://grafana.company.com/d/user-service
+      title: Grafana Dashboard
+      icon: dashboard
+    - url: https://jenkins.company.com/job/user-service
+      title: CI/CD Pipeline
+      icon: build
+      
+spec:
+  type: service
+  lifecycle: production
+  owner: team:platform-team
+  system: system:user-management-system
+  
+  # Define dependencies on other services
+  dependsOn:
+    - component:notification-service
+    - component:email-service
+    - component:audit-service
+    - resource:user-database
+    - resource:redis-cache
+    - resource:s3-bucket-avatars
+  
+  # Define what this service provides
+  providesApis:
+    - user-api-v2
+    - admin-api-v1
+  
+  # Consumes these APIs from other services
+  consumesApis:
+    - notification-api
+    - email-api
+    - payment-api
+    - analytics-api
