@@ -6,9 +6,7 @@ metadata:
   description: Microservice handling user authentication, authorization, and profile management
   annotations:
     # Version information
-    backstage.io/version: "1.2.3"
-    
-    
+    my-org/software-version: "1.2.3"
     # CI/CD integration
     code-pipeline/job-full-name: platform/user-service
     
@@ -29,6 +27,7 @@ metadata:
     environment/cluster: prod-cluster-01
     
   labels:
+    backstage.io/version: "1.2.3"
     # Environment labels
     environment: production
     tier: backend
