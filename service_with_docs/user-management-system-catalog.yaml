@@ -1,0 +1,210 @@
+# System definition
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: user-management-system
+  title: User Management System
+  description: Complete user management solution including authentication, authorization, and profile management
+  tags:
+    - platform
+    - critical
+spec:
+  owner: team:platform-team
+  domain: domain:platform
+
+# Main Service Component
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: user-service
+  title: User Management Service
+  description: Core user management microservice
+  annotations:
+    backstage.io/service-version: "2.3.1"
+    backstage.io/kubernetes-id: user-service
+    backstage.io/kubernetes-namespace: production
+    
+    # Package dependencies with versions
+    dependencies/npm: |
+      {
+        "express": "^4.18.2",
+        "jsonwebtoken": "^9.0.0",
+        "bcryptjs": "^2.4.3",
+        "mongoose": "^7.0.3",
+        "redis": "^4.6.5",
+        "@aws-sdk/client-s3": "^3.450.0",
+        "winston": "^3.11.0",
+        "joi": "^17.11.0",
+        "helmet": "^7.1.0",
+        "cors": "^2.8.5"
+      }
+    
+    # Service dependencies
+    dependencies/services: |
+      - notification-service@1.5.0 (REST API)
+      - email-service@2.1.3 (gRPC)
+      - audit-service@1.0.5 (Kafka events)
+      - payment-service@3.2.1 (REST API)
+    
+    # Infrastructure dependencies
+    dependencies/infrastructure: |
+      - MongoDB 6.0 (Primary Database)
+      - Redis 7.2 (Cache & Sessions)
+      - AWS S3 (File Storage)
+      - Kafka 3.5 (Event Streaming)
+    
+    # Environment configuration
+    environment/production: |
+      region: us-east-1
+      cluster: eks-prod-01
+      replicas: 5
+      cpu: 2000m
+      memory: 4Gi
+    
+    environment/staging: |
+      region: us-east-1
+      cluster: eks-staging-01
+      replicas: 2
+      cpu: 1000m
+      memory: 2Gi
+      
+  labels:
+    environment: production
+    version: 2.3.1
+    tier: backend
+    
+spec:
+  type: service
+  lifecycle: production
+  owner: team:platform-team
+  system: system:user-management-system
+  
+  dependsOn:
+    - component:notification-service
+    - component:email-service
+    - component:audit-service
+    - resource:user-database
+    - resource:redis-cache
+    - resource:user-files-s3
+  
+  providesApis:
+    - user-api-v2
+  
+  consumesApis:
+    - notification-api-v1
+    - email-api-v2
+    - payment-api-v3
+
+# API Definition
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: user-api-v2
+  title: User API v2
+  description: RESTful API for user management operations
+  annotations:
+    backstage.io/api-version: "2.0.0"
+spec:
+  type: openapi
+  lifecycle: production
+  owner: team:platform-team
+  system: system:user-management-system
+  definition: |
+    openapi: 3.0.0
+    info:
+      title: User API
+      version: 2.0.0
+    paths:
+      /users:
+        get:
+          summary: List users
+      /users/{id}:
+        get:
+          summary: Get user by ID
+
+# Database Resource
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: user-database
+  title: User Database (MongoDB)
+  description: Primary MongoDB database for user data
+  annotations:
+    backstage.io/database-version: "6.0.11"
+    environment: production
+    replica-set: rs0
+    connection-string: mongodb://cluster0.mongodb.net/users
+spec:
+  type: database
+  owner: team:platform-team
+  system: system:user-management-system
+  lifecycle: production
+
+# Cache Resource
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: redis-cache
+  title: Redis Cache
+  description: Redis cache for sessions and temporary data
+  annotations:
+    backstage.io/redis-version: "7.2.3"
+    environment: production
+    cluster-mode: enabled
+    nodes: "6"
+spec:
+  type: cache
+  owner: team:platform-team
+  system: system:user-management-system
+  lifecycle: production
+
+# S3 Bucket Resource
+---
+apiVersion: backstage.io/v1alpha1
+kind: Resource
+metadata:
+  name: user-files-s3
+  title: User Files S3 Bucket
+  description: AWS S3 bucket for user avatars and documents
+  annotations:
+    aws/bucket-name: company-user-files-prod
+    aws/region: us-east-1
+    aws/versioning: enabled
+    aws/encryption: AES256
+spec:
+  type: storage
+  owner: team:platform-team
+  system: system:user-management-system
+  lifecycle: production
+
+# Team/Group Definition
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-team
+  title: Platform Team
+  description: Team responsible for platform services
+spec:
+  type: team
+  parent: engineering
+  children: []
+  members:
+    - user:john.doe
+    - user:jane.smith
+
+# Domain Definition
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: platform
+  title: Platform Domain
+  description: Core platform services and infrastructure
+spec:
+  owner: team:platform-team
