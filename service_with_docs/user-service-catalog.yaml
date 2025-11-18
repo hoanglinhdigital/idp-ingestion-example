@@ -6,30 +6,11 @@ metadata:
   description: Microservice handling user authentication, authorization, and profile management
   annotations:
     # Version information
-    backstage.io/service-version: "2.3.1"
-    backstage.io/managed-by-location: "url:https://github.com/company/user-service/blob/main/catalog-info.yaml"
+    backstage.io/version: "1.2.3"
     
-    # GitHub integration
-    github.com/project-slug: company/user-service
-    github.com/team-slug: company/platform-team
     
     # CI/CD integration
-    jenkins.io/job-full-name: platform/user-service
-    circleci.com/project-slug: github/company/user-service
-    
-    # Monitoring & Observability
-    datadoghq.com/service-name: user-service
-    grafana/dashboard-url: https://grafana.company.com/d/user-service
-    pagerduty.com/service-id: PAGERDUTY_SERVICE_ID
-    
-    # Documentation
-    backstage.io/techdocs-ref: dir:.
-    confluence.com/space-key: USERSERV
-    
-    # Container/Deployment info
-    backstage.io/kubernetes-id: user-service
-    backstage.io/kubernetes-namespace: production
-    docker.com/image-name: company/user-service
+    code-pipeline/job-full-name: platform/user-service
     
     # Custom annotations for dependencies
     dependencies/packages: |
@@ -69,24 +50,6 @@ metadata:
     - microservice
     - rest-api
     - authentication
-    - docker
-    - kubernetes
-    - critical-service
-    
-  links:
-    - url: https://user-service.company.com/docs
-      title: API Documentation
-      icon: docs
-    - url: https://github.com/company/user-service
-      title: Source Code
-      icon: github
-    - url: https://grafana.company.com/d/user-service
-      title: Grafana Dashboard
-      icon: dashboard
-    - url: https://jenkins.company.com/job/user-service
-      title: CI/CD Pipeline
-      icon: build
-      
 spec:
   type: service
   lifecycle: production
